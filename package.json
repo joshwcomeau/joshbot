@@ -1,0 +1,42 @@
+{
+  "name": "jwc-discord-bot",
+  "version": "0.0.1",
+  "description": "The bot for Josh Comeau's Course Platform",
+  "main": "index.js",
+  "keywords": [],
+  "author": "Josh W. Comeau <support@joshwcomeau.com> (https://courses.joshwcomeau.com)",
+  "license": "MIT",
+  "scripts": {
+    "start": "nodemon --exec babel-node ."
+  },
+  "engines": {
+    "node": "12",
+    "npm": "6"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/joshwcomeau/discord-bot"
+  },
+  "bugs": {
+    "url": "https://github.com/joshwcomeau/discord-bot/issues"
+  },
+  "homepage": "https://github.com/joshwcomeau/discord-bot#readme",
+  "dependencies": {
+    "@babel/runtime": "^7.13.8",
+    "discord.js": "12.5.1",
+    "dotenv": "^8.2.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.13.13",
+    "@babel/node": "^7.13.13",
+    "@babel/preset-env": "^7.13.12",
+    "nodemon": "^2.0.7"
+  },
+  "eslintIgnore": [
+    "node_modules",
+    "coverage",
+    "dist",
+    "*.ignored.*",
+    "*.d.ts"
+  ]
+}
