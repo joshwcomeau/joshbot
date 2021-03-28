@@ -1,5 +1,5 @@
 import Discord from 'discord.js';
-import { setup } from './setup';
+import onboardingSetup from './onboarding';
 
 function start() {
   const client = new Discord.Client();
@@ -7,7 +7,7 @@ function start() {
   client.login(process.env.DISCORD_BOT_TOKEN);
 
   client.on('ready', () => {
-    setup(client);
+    onboardingSetup(client);
   });
 }
 
