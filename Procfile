@@ -1,1 +1,1 @@
-worker: npm start
+clock: npm start
