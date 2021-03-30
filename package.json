@@ -8,6 +8,7 @@
   "license": "MIT",
   "scripts": {
     "start": "nodemon --exec babel-node .",
+    "bulk-roles": "babel-node ./scripts/bulk-update-roles.js",
     "test": "jest"
   },
   "engines": {

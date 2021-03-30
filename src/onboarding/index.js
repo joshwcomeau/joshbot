@@ -1,4 +1,3 @@
-// import {cleanupGuildOnInterval} from './utils'
 import handleNewMember from './handle-new-member';
 import handleNewMessage from './handle-new-message';
 

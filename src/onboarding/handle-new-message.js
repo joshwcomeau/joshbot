@@ -16,7 +16,7 @@ import {
   speakDisagreeWithRules,
   speakAgreeWithRules,
   speakSelfDestruct,
-} from './utils';
+} from './onboarding.helpers';
 
 export default async function handleNewMessage(
   { channel, author, content, ...rest },

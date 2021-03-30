@@ -1,4 +1,5 @@
 import { EMAIL_ATTEMPT_LIMIT } from '../constants';
+import { sleep } from '../utils';
 
 export async function fetchUserByDiscordId(discordId) {
   const response = await fetch(
@@ -27,10 +28,6 @@ export function getStep(member) {
   }
 
   return 'onboarding-completed';
-}
-
-export function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 export async function speakEmailLookupSucceeded(author, courseName) {

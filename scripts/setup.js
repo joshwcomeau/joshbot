@@ -1,4 +1,4 @@
-// TODO: Consolidate with scripts/setup
+// TODO: Consolidate with tests/helpers/setup
 const path = require('path');
 
 require('dotenv').config({
