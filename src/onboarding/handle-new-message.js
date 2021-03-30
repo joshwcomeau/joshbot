@@ -1,22 +1,27 @@
 import fetch from 'isomorphic-unfetch';
 
 import {
+  registerMember,
   getMemberByDiscordId,
-  handleEnterInvalidEmail,
+  incrementInvalidEmailCount,
   linkMemberToCourseUser,
   disagreeWithRules,
+  agreeWithRules,
 } from '../models/member.model';
+import {
+  getStep,
+  speakEmailLookupSucceeded,
+  speakUserNotFound,
+  speakEmailAlreadyUsed,
+  speakDisagreeWithRules,
+  speakAgreeWithRules,
+  speakSelfDestruct,
+} from './utils';
 
-export default async function handleNewMessage({
-  channel,
-  author,
-  content,
-  ...rest
-}) {
-  const studentRole = channel.guild.roles.cache.find(
-    (role) => role.name === 'Student'
-  );
-
+export default async function handleNewMessage(
+  { channel, author, content, ...rest },
+  { addRole }
+) {
   // Ignore everything except direct messages to the bot
   const isFromMe = author.bot;
   const isDM = channel.type === 'dm';
@@ -24,9 +29,19 @@ export default async function handleNewMessage({
     return;
   }
 
-  const member = await getMemberByDiscordId(author.id);
+  let member = await getMemberByDiscordId(author.id);
 
-  // TODO: Handle member-not-found (should be impossible?)
+  // If we don't have a member, it must be a race-condition.
+  // Let's try re-registering the member.
+  if (!member) {
+    member = await registerMember({ user: author });
+  }
+
+  if (member.badSeed) {
+    await send(
+      'Your account has been flagged. Please contact support for more information.'
+    );
+  }
 
   const step = getStep(member);
 
@@ -48,30 +63,17 @@ export default async function handleNewMessage({
       const json = await response.json();
 
       if (json.status === 'success') {
-        // Update member
         await linkMemberToCourseUser(member, json.user);
-        await author.send(`Welcome to Discord, ${json.user.name}!`);
-
-        // TODO: Embed!
-        await author.send(
-          `On this server, we take the Code of Conduct seriously. Please take a moment to check it out here: https://courses.joshwcomeau.com/code-of-conduct`
-        );
-        await author.send(
-          `**Do you agree to do your best to abide by the code of conduct?**`
-        );
-        await author.send(`(the only accepted answer is _yes_)`);
+        await speakEmailLookupSucceeded(author, json.user.name);
+      } else if (json.error === 'user-not-found') {
+        await speakUserNotFound(author, member);
+        await incrementInvalidEmailCount(author.id);
+      } else if (json.error === 'already-linked-to-another-account') {
+        await speakEmailAlreadyUsed(author);
       } else {
-        if (json.error === 'user-not-found') {
-          // TODO: Check the attempts.
-          // Change the message each time
-          await handleEnterInvalidEmail(author.id);
-          await author.send(
-            "I wasn't able to find an account with that email."
-          );
-          await author.send(
-            'You can check which email you used by visiting https://courses.joshwcomeau.com/account.'
-          );
-        }
+        await author.send(
+          'Hm, something unexpected has happened. Please contact support@joshwcomeau.com, and include your Discord username + the email you just provided.'
+        );
       }
 
       break;
@@ -79,7 +81,7 @@ export default async function handleNewMessage({
 
     case 'too-many-attempts': {
       await author.send(
-        "I'm afraid you've entered too many invalid email addresses. Please send an email to support@joshwcomeau.com."
+        "I'm afraid you've entered too many incorrect email addresses. Please send an email to support@joshwcomeau.com."
       );
 
       break;
@@ -93,34 +95,18 @@ export default async function handleNewMessage({
         providedAnswer === 'nah' ||
         providedAnswer === 'nope'
       ) {
-        await disagreeWithRules(author);
-        await author.send('Thank you for the candid response.');
-        await author.send(
-          'You can email any concerns you have about the Code of Conduct to support@joshwcomeau.com.'
-        );
-        await author.send(
-          "In the meantime, regrettably, I'm afraid you won't be able to access this community."
-        );
+        await disagreeWithRules(member);
+        await speakDisagreeWithRules(author);
       } else if (
         providedAnswer === 'yes' ||
         providedAnswer === 'yep' ||
         providedAnswer === 'yeah' ||
         providedAnswer === 'ya'
       ) {
-        await agreeWithRules(author);
+        await agreeWithRules(member);
+        addRole('Student');
 
-        author.roles.add(studentRole).catch((err) => {
-          console.error(err);
-          // TODO: Proper error handling!
-        });
-
-        await author.send('Response accepted! 💖');
-        await author.send(
-          'You now have access to the entire server. Welcome aboard! 🥳 🎉'
-        );
-        await author.send(
-          "We'd love to get to know you a bit. Tell us about yourself in the #👋🏻-introductions channel."
-        );
+        await speakAgreeWithRules(author);
       } else {
         await author.send(
           "I didn't understand that response. Please say _yes_ if you agree. Otherwise, feel free to reach out to Josh at support@joshwcomeau.com."
@@ -131,6 +117,7 @@ export default async function handleNewMessage({
 
     case 'onboarding-completed':
     default: {
+      await speakSelfDestruct(author);
       break;
     }
   }

@@ -55,7 +55,7 @@ export async function getMemberByDiscordId(discordId) {
   return member;
 }
 
-export async function handleEnterInvalidEmail(discordId) {
+export async function incrementInvalidEmailCount(discordId) {
   const { db } = await connectToDatabase();
 
   const collection = db.collection('members');
@@ -108,8 +108,7 @@ export async function agreeWithRules(member) {
     { discordId: member.discordId },
     {
       $set: {
-        badSeed: true,
-        badSeedReason: 'said-no-to-rules',
+        hasAgreedToRules: true,
       },
     }
   );

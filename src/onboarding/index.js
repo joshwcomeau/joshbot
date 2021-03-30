@@ -7,8 +7,19 @@ import handleNewMessage from './handle-new-message';
 
 export default function setup(client) {
   client.on('guildMemberAdd', handleNewMember);
-  client.on('message', handleNewMessage);
-  // client.on('messageUpdate', handleUpdatedMessage)
+  client.on('message', (message) => {
+    handleNewMessage(message, {
+      addRole(roleName) {
+        const guild = client.guilds.cache.get(
+          process.env.DISCORD_GUILD_ID
+        );
 
-  // cleanupGuildOnInterval(client, guild => cleanup(guild), 5000)
+        const role = guild.roles.cache.find(
+          (role) => role.name === roleName
+        );
+
+        guild.members.cache.get(message.author.id).roles.add(role.id);
+      },
+    });
+  });
 }
