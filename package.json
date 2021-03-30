@@ -7,8 +7,8 @@
   "author": "Josh W. Comeau <support@joshwcomeau.com> (https://courses.joshwcomeau.com)",
   "license": "MIT",
   "scripts": {
-    "start": "NODE_ENV=production babel-node .",
-    "start:local": "nodemon --exec babel-node .",
+    "start": "nodemon --exec babel-node .",
+    "start:prod": "NODE_ENV=production babel-node .",
     "bulk-roles": "babel-node ./scripts/bulk-update-roles.js",
     "test": "jest"
   },
