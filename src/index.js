@@ -7,7 +7,9 @@ function start() {
   client.login(process.env.DISCORD_BOT_TOKEN);
 
   client.on('ready', () => {
-    onboardingSetup(client);
+    // TEMPORARILY DISABLED
+    console.log('Ready, but disabled');
+    // onboardingSetup(client);
   });
 }
 
