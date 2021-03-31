@@ -104,6 +104,7 @@ export default async function handleNewMessage(
         providedAnswer === 'ya'
       ) {
         await agreeWithRules(member);
+        console.log('About to add role');
         addRole('Student');
 
         await speakAgreeWithRules(author);

@@ -1,9 +1,6 @@
 import handleNewMember from './handle-new-member';
 import handleNewMessage from './handle-new-message';
 
-// import {handleUpdatedMessage} from './handle-updated-message'
-// import {cleanup} from './cleanup'
-
 export default function setup(client) {
   client.on('guildMemberAdd', handleNewMember);
   client.on('message', (message) => {
@@ -16,6 +13,8 @@ export default function setup(client) {
         const role = guild.roles.cache.find(
           (role) => role.name === roleName
         );
+
+        console.log(roleName, role, message.author.id);
 
         guild.members.cache.get(message.author.id).roles.add(role.id);
       },
