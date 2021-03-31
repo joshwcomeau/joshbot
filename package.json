@@ -8,7 +8,8 @@
   "license": "MIT",
   "scripts": {
     "start": "nodemon --exec babel-node .",
-    "start:prod": "NODE_ENV=production babel-node .",
+    "start:prod": "node ./dist",
+    "build": "babel src -d dist",
     "bulk-roles": "babel-node ./scripts/bulk-update-roles.js",
     "test": "jest"
   },
@@ -25,16 +26,18 @@
   },
   "homepage": "https://github.com/joshwcomeau/discord-bot#readme",
   "dependencies": {
+    "discord.js": "12.5.1",
+    "dotenv": "^8.2.0",
+    "isomorphic-unfetch": "^3.1.0",
+    "mongodb": "^3.6.5",
+    "pm2": "^4.5.5"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.13.14",
     "@babel/core": "^7.13.13",
     "@babel/node": "^7.13.13",
     "@babel/preset-env": "^7.13.12",
     "@babel/runtime": "^7.13.8",
-    "discord.js": "12.5.1",
-    "dotenv": "^8.2.0",
-    "isomorphic-unfetch": "^3.1.0",
-    "mongodb": "^3.6.5"
-  },
-  "devDependencies": {
     "jest": "^26.6.3",
     "nodemon": "^2.0.7"
   },
