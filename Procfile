@@ -1,1 +1,1 @@
-clock: npm start:prod
+worker: npm start:prod
