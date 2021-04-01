@@ -20,8 +20,9 @@ import {
 
 export default async function handleNewMessage(
   { channel, author, content, ...rest },
-  { addRole }
+  addStudentRole
 ) {
+  console.log('New message', content, author);
   // Ignore everything except direct messages to the bot
   const isFromMe = author.bot;
   const isDM = channel.type === 'dm';
@@ -104,8 +105,8 @@ export default async function handleNewMessage(
         providedAnswer === 'ya'
       ) {
         await agreeWithRules(member);
-        console.log('About to add role');
-        addRole('Student');
+
+        addStudentRole(author.user.id);
 
         await speakAgreeWithRules(author);
       } else {

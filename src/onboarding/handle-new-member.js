@@ -1,13 +1,18 @@
 import { registerMember } from '../models/member.model';
+import { fetchUserByDiscordId } from './onboarding.helpers';
 
-export default async function handleNewMember(guildMember) {
-  // If this person has been here before, they should already have
-  // the `Student` role. Ignore them if so.
-  const studentRole = guildMember.roles.cache.find(
-    (role) => role.name === 'Student'
+export default async function handleNewMember(
+  guildMember,
+  addStudentRole
+) {
+  console.log('New member');
+  const preExistingMember = await fetchUserByDiscordId(
+    guildMember.user.id
   );
 
-  if (studentRole && guildMember.roles.cache.has(studentRole.id)) {
+  if (preExistingMember) {
+    addStudentRole(guildMember.user.id);
+    await guildMember.send('Welcome back!');
     return;
   }
 
