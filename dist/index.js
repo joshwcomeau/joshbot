@@ -10,8 +10,7 @@ function start() {
   const client = new _discord.default.Client();
   client.login(process.env.DISCORD_BOT_TOKEN);
   client.on('ready', () => {
-    // TEMPORARILY DISABLED
-    console.log('Ready, but disabled'); // onboardingSetup(client);
+    (0, _onboarding.default)(client);
   });
 }
 

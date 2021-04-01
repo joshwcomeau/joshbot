@@ -5,7 +5,6 @@ export default async function handleNewMember(
   guildMember,
   addStudentRole
 ) {
-  console.log('New member');
   const preExistingMember = await fetchUserByDiscordId(
     guildMember.user.id
   );

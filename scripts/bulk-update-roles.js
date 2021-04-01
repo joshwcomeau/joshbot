@@ -25,7 +25,6 @@ function start() {
       const members = await guild.members.fetch();
 
       for (const entry of members) {
-        console.log('iteration #', i);
         i++;
 
         const [, member] = entry;
@@ -44,8 +43,6 @@ function start() {
         }
 
         member.roles.add(role.id);
-
-        console.log('Role added');
 
         await sleep(500);
       }

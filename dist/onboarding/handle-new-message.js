@@ -18,9 +18,7 @@ async function handleNewMessage({
   author,
   content,
   ...rest
-}, {
-  addRole
-}) {
+}, addStudentRole) {
   // Ignore everything except direct messages to the bot
   const isFromMe = author.bot;
   const isDM = channel.type === 'dm';
@@ -87,7 +85,7 @@ async function handleNewMessage({
           await (0, _onboarding.speakDisagreeWithRules)(author);
         } else if (providedAnswer === 'yes' || providedAnswer === 'yep' || providedAnswer === 'yeah' || providedAnswer === 'ya') {
           await (0, _member.agreeWithRules)(member);
-          addRole('Student');
+          addStudentRole(author.id);
           await (0, _onboarding.speakAgreeWithRules)(author);
         } else {
           await author.send("I didn't understand that response. Please say _yes_ if you agree. Otherwise, feel free to reach out to Josh at support@joshwcomeau.com.");
