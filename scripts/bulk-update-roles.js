@@ -4,8 +4,7 @@ import Discord from 'discord.js';
 
 import { sleep } from '../src/utils';
 
-const GUILD_ID = '783425607492304947'; // Production!
-// const GUILD_ID = process.env.DISCORD_GUILD_ID;
+const GUILD_ID = process.env.DISCORD_GUILD_ID;
 
 function start() {
   const client = new Discord.Client();
@@ -13,6 +12,7 @@ function start() {
   client.login(process.env.DISCORD_BOT_TOKEN);
 
   client.on('ready', async () => {
+    console.log(client.guilds.cache);
     const guild = client.guilds.cache.get(GUILD_ID);
 
     const role = guild.roles.cache.find(
@@ -25,6 +25,7 @@ function start() {
       const members = await guild.members.fetch();
 
       for (const entry of members) {
+        console.log('Remaining:', members.size - i);
         i++;
 
         const [, member] = entry;
@@ -42,9 +43,14 @@ function start() {
           continue;
         }
 
-        member.roles.add(role.id);
+        try {
+          await member.roles.add(role.id);
+          console.log('added role');
 
-        await sleep(500);
+          await sleep(1000);
+        } catch (err) {
+          console.error(err);
+        }
       }
     } catch (err) {
       console.error(err);
