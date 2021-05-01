@@ -2,6 +2,8 @@ import mongo from 'mongodb';
 
 import connectToDatabase from '../database';
 
+const COLLECTION_NAME = 'discord-members';
+
 // Create a new user when someone joins the Discord
 export async function registerMember(member) {
   const {
@@ -11,7 +13,7 @@ export async function registerMember(member) {
 
   const { db } = await connectToDatabase();
 
-  const collection = db.collection('members');
+  const collection = db.collection(COLLECTION_NAME);
 
   // Check if it already exists
   const preExistingMember = await collection.findOne({
@@ -48,7 +50,7 @@ export async function registerMember(member) {
 export async function getMemberByDiscordId(discordId) {
   const { db } = await connectToDatabase();
 
-  const collection = db.collection('members');
+  const collection = db.collection(COLLECTION_NAME);
 
   const member = await collection.findOne({ discordId });
 
@@ -58,7 +60,7 @@ export async function getMemberByDiscordId(discordId) {
 export async function incrementInvalidEmailCount(discordId) {
   const { db } = await connectToDatabase();
 
-  const collection = db.collection('members');
+  const collection = db.collection(COLLECTION_NAME);
 
   return collection.updateOne(
     { discordId },
@@ -73,7 +75,7 @@ export async function incrementInvalidEmailCount(discordId) {
 export async function linkMemberToCourseUser(member, user) {
   const { db } = await connectToDatabase();
 
-  const collection = db.collection('members');
+  const collection = db.collection(COLLECTION_NAME);
 
   return collection.updateOne(
     { discordId: member.discordId },
@@ -87,7 +89,7 @@ export async function linkMemberToCourseUser(member, user) {
 export async function disagreeWithRules(member) {
   const { db } = await connectToDatabase();
 
-  const collection = db.collection('members');
+  const collection = db.collection(COLLECTION_NAME);
 
   return collection.updateOne(
     { discordId: member.discordId },
@@ -102,7 +104,7 @@ export async function disagreeWithRules(member) {
 export async function agreeWithRules(member) {
   const { db } = await connectToDatabase();
 
-  const collection = db.collection('members');
+  const collection = db.collection(COLLECTION_NAME);
 
   return collection.updateOne(
     { discordId: member.discordId },
