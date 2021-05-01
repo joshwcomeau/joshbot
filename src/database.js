@@ -49,6 +49,8 @@ export default async function connectToDatabase() {
 
   cached.client = await cached.promise;
 
+  console.log('Connecting to database name', dbName);
+
   cached.db = await cached.client.db(dbName);
 
   cached.closeConnection = closeConnection;
