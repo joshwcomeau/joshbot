@@ -16,7 +16,8 @@ var _database = _interopRequireDefault(require("../database"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-// Create a new user when someone joins the Discord
+const COLLECTION_NAME = 'discord-members'; // Create a new user when someone joins the Discord
+
 async function registerMember(member) {
   const {
     nickname,
@@ -28,7 +29,7 @@ async function registerMember(member) {
   const {
     db
   } = await (0, _database.default)();
-  const collection = db.collection('members'); // Check if it already exists
+  const collection = db.collection(COLLECTION_NAME); // Check if it already exists
 
   const preExistingMember = await collection.findOne({
     discordId
@@ -66,7 +67,7 @@ async function getMemberByDiscordId(discordId) {
   const {
     db
   } = await (0, _database.default)();
-  const collection = db.collection('members');
+  const collection = db.collection(COLLECTION_NAME);
   const member = await collection.findOne({
     discordId
   });
@@ -77,7 +78,7 @@ async function incrementInvalidEmailCount(discordId) {
   const {
     db
   } = await (0, _database.default)();
-  const collection = db.collection('members');
+  const collection = db.collection(COLLECTION_NAME);
   return collection.updateOne({
     discordId
   }, {
@@ -91,7 +92,7 @@ async function linkMemberToCourseUser(member, user) {
   const {
     db
   } = await (0, _database.default)();
-  const collection = db.collection('members');
+  const collection = db.collection(COLLECTION_NAME);
   return collection.updateOne({
     discordId: member.discordId
   }, {
@@ -105,7 +106,7 @@ async function disagreeWithRules(member) {
   const {
     db
   } = await (0, _database.default)();
-  const collection = db.collection('members');
+  const collection = db.collection(COLLECTION_NAME);
   return collection.updateOne({
     discordId: member.discordId
   }, {
@@ -120,7 +121,7 @@ async function agreeWithRules(member) {
   const {
     db
   } = await (0, _database.default)();
-  const collection = db.collection('members');
+  const collection = db.collection(COLLECTION_NAME);
   return collection.updateOne({
     discordId: member.discordId
   }, {
