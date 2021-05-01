@@ -8,7 +8,7 @@
   "license": "MIT",
   "scripts": {
     "start": "nodemon --exec babel-node .",
-    "start:prod": "node ./dist",
+    "start:prod": "npm run build && node ./dist",
     "build": "babel src -d dist",
     "bulk-roles": "babel-node ./scripts/bulk-update-roles.js",
     "test": "jest"
