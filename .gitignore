@@ -7,4 +7,6 @@ coverage
 
 *.ignored.*
 
+./dist
+
 build-info.json
