@@ -1,3 +1,4 @@
+import { trackEvent, resetScope } from '../helpers/error.helpers';
 import handleNewMember from './handle-new-member';
 import handleNewMessage from './handle-new-message';
 
@@ -15,10 +16,55 @@ export default function setup(client) {
   }
 
   client.on('guildMemberAdd', (guildMember) => {
-    handleNewMember(guildMember, addStudentRole);
+    resetScope();
+
+    const [trackError, trackComplete] = trackEvent('add-new-member');
+
+    handleNewMember(guildMember, addStudentRole)
+      .then(trackComplete)
+      .catch((err) => {
+        const metadata = {
+          guild: {
+            name: guildMember.guild.name,
+          },
+          discordMember: {
+            id: guildMember.user.id,
+            username: guildMember.user.username,
+            discriminator: guildMember.user.discriminator,
+            joinedAt: guildMember.joinedTimestamp,
+          },
+        };
+        trackError(err, metadata);
+      });
   });
 
   client.on('message', (message) => {
-    handleNewMessage(message, addStudentRole);
+    resetScope();
+
+    // Ignore everything except direct messages to the bot
+    const isFromMe = message.author.bot;
+    const isDM = message.channel.type === 'dm';
+    if (isFromMe || !isDM) {
+      return;
+    }
+
+    const [trackError, trackComplete] = trackEvent('receive-message');
+
+    handleNewMessage(message, addStudentRole)
+      .then(trackComplete)
+      .catch((err) => {
+        const metadata = {
+          message: {
+            content: message.content,
+          },
+          author: {
+            id: message.author.id,
+            username: message.author.username,
+            discriminator: message.author.discriminator,
+          },
+        };
+
+        trackError(err, metadata);
+      });
   });
 }

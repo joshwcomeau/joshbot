@@ -1,6 +1,10 @@
 import fetch from 'isomorphic-unfetch';
 
 import {
+  captureUserForLogs,
+  generateBreadcrumbFunction,
+} from '../helpers/error.helpers';
+import {
   registerMember,
   getMemberByDiscordId,
   incrementInvalidEmailCount,
@@ -18,17 +22,12 @@ import {
   speakSelfDestruct,
 } from './onboarding.helpers';
 
+const addBreadcrumb = generateBreadcrumbFunction('onboarding');
+
 export default async function handleNewMessage(
-  { channel, author, content, ...rest },
+  { author, content, ...rest },
   addStudentRole
 ) {
-  // Ignore everything except direct messages to the bot
-  const isFromMe = author.bot;
-  const isDM = channel.type === 'dm';
-  if (isFromMe || !isDM) {
-    return;
-  }
-
   let member = await getMemberByDiscordId(author.id);
 
   // If we don't have a member, it must be a race-condition.
@@ -41,6 +40,7 @@ export default async function handleNewMessage(
     await send(
       'Your account has been flagged. Please contact support for more information.'
     );
+    return;
   }
 
   const step = getStep(member);
@@ -63,16 +63,30 @@ export default async function handleNewMessage(
       const json = await response.json();
 
       if (json.status === 'success') {
+        addBreadcrumb({ message: 'linked-new-user' });
+
+        captureUserForLogs(json.user);
+
         await linkMemberToCourseUser(member, json.user);
         await speakEmailLookupSucceeded(author, json.user.name);
+        throw new Error('after ku!');
       } else if (json.error === 'user-not-found') {
+        addBreadcrumb({ message: 'user-not-found' });
+
         await speakUserNotFound(author, member);
         await incrementInvalidEmailCount(author.id);
       } else if (json.error === 'already-linked-to-another-account') {
+        addBreadcrumb({
+          message: 'already-linked-to-another-account',
+        });
         await speakEmailAlreadyUsed(author);
       } else {
         await author.send(
           'Hm, something unexpected has happened. Please contact support@joshwcomeau.com, and include your Discord username + the email you just provided.'
+        );
+
+        throw new Error(
+          'Unrecognized response from server when attempting to link user'
         );
       }
 
@@ -80,6 +94,8 @@ export default async function handleNewMessage(
     }
 
     case 'too-many-attempts': {
+      addBreadcrumb({ message: 'too-many-attempts' });
+
       await author.send(
         "I'm afraid you've entered too many incorrect email addresses. Please send an email to support@joshwcomeau.com."
       );
@@ -95,6 +111,7 @@ export default async function handleNewMessage(
         providedAnswer === 'nah' ||
         providedAnswer === 'nope'
       ) {
+        addBreadcrumb({ message: 'disagree-with-rules' });
         await disagreeWithRules(member);
         await speakDisagreeWithRules(author);
       } else if (
@@ -103,12 +120,15 @@ export default async function handleNewMessage(
         providedAnswer === 'yeah' ||
         providedAnswer === 'ya'
       ) {
+        addBreadcrumb({ message: 'agree-with-rules' });
         await agreeWithRules(member);
 
         addStudentRole(author.id);
 
         await speakAgreeWithRules(author);
       } else {
+        addBreadcrumb({ message: 'misunderstood-response' });
+
         await author.send(
           "I didn't understand that response. Please say _yes_ if you agree. Otherwise, feel free to reach out to Josh at support@joshwcomeau.com."
         );
@@ -118,6 +138,8 @@ export default async function handleNewMessage(
 
     case 'onboarding-completed':
     default: {
+      addBreadcrumb({ message: 'onboarding-completed' });
+
       await speakSelfDestruct(author);
       break;
     }

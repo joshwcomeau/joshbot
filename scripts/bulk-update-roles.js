@@ -12,7 +12,7 @@ function start() {
   client.login(process.env.DISCORD_BOT_TOKEN);
 
   client.on('ready', async () => {
-    console.log(client.guilds.cache);
+    console.info(client.guilds.cache);
     const guild = client.guilds.cache.get(GUILD_ID);
 
     const role = guild.roles.cache.find(
@@ -25,7 +25,7 @@ function start() {
       const members = await guild.members.fetch();
 
       for (const entry of members) {
-        console.log('Remaining:', members.size - i);
+        console.info('Remaining:', members.size - i);
         i++;
 
         const [, member] = entry;
@@ -45,7 +45,7 @@ function start() {
 
         try {
           await member.roles.add(role.id);
-          console.log('added role');
+          console.info('added role');
 
           await sleep(1000);
         } catch (err) {

@@ -1,5 +1,7 @@
+import { captureUserForLogs } from '../helpers/error.helpers';
 import { registerMember } from '../models/member.model';
 import { fetchUserByDiscordId } from './onboarding.helpers';
+import { sleep } from '../utils';
 
 export default async function handleNewMember(
   guildMember,
@@ -10,8 +12,11 @@ export default async function handleNewMember(
   );
 
   if (preExistingMember) {
+    captureUserForLogs(preExistingMember);
     addStudentRole(guildMember.user.id);
+
     await guildMember.send('Welcome back!');
+
     return;
   }
 
@@ -22,9 +27,11 @@ export default async function handleNewMember(
     await guildMember.send(
       `Hey ${name}! Welcome to this Discord server 😄`
     );
+    await sleep(1234);
     await guildMember.send(
       `This server is meant exclusively for folks who have purchased the “CSS for JavaScript Developers” course.`
     );
+    await sleep(1876);
     await guildMember.send(
       `Can you please send me the **email address** you used during purchase?`
     );
