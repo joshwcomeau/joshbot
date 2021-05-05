@@ -69,7 +69,6 @@ export default async function handleNewMessage(
 
         await linkMemberToCourseUser(member, json.user);
         await speakEmailLookupSucceeded(author, json.user.name);
-        throw new Error('after ku!');
       } else if (json.error === 'user-not-found') {
         addBreadcrumb({ message: 'user-not-found' });
 
