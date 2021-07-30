@@ -4,7 +4,7 @@ import * as Tracing from '@sentry/tracing';
 Sentry.init({
   dsn: process.env.SENTRY_DSN,
   tracesSampleRate: 1.0,
-  environment: process.env.NODE_ENV,
+  environment: process.env.NODE_ENV || 'development',
 });
 
 export const resetScope = () => {
@@ -17,15 +17,14 @@ export const captureUserForLogs = (user) => {
   return Sentry.setUser(user);
 };
 
-export const generateBreadcrumbFunction = (category) => ({
-  level = Sentry.Severity.Info,
-  message,
-}) =>
-  Sentry.addBreadcrumb({
-    category,
-    message,
-    level,
-  });
+export const generateBreadcrumbFunction =
+  (category) =>
+  ({ level = Sentry.Severity.Info, message }) =>
+    Sentry.addBreadcrumb({
+      category,
+      message,
+      level,
+    });
 
 export function trackEvent(name) {
   const transaction = Sentry.startTransaction({ name });

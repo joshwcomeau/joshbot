@@ -36,6 +36,8 @@ export default function setup(client) {
           },
         };
         trackError(err, metadata);
+
+        console.error('Error handling new member', err, metadata);
       });
   });
 
@@ -66,6 +68,8 @@ export default function setup(client) {
         };
 
         trackError(err, metadata);
+
+        console.error('Error handling message', err, metadata);
       });
   });
 }
