@@ -4,6 +4,7 @@ import {
   captureUserForLogs,
   generateBreadcrumbFunction,
 } from '../helpers/error.helpers';
+import { lookUpEmail } from '../helpers/api.helpers';
 import {
   registerMember,
   getMemberByDiscordId,
@@ -49,18 +50,7 @@ export default async function handleNewMessage(
     case 'enter-email': {
       const providedEmail = content.trim();
 
-      const response = await fetch(
-        `${process.env.API_ROOT}/api/discord/look-up-email`,
-        {
-          method: 'POST',
-          body: JSON.stringify({
-            providedEmail,
-            author,
-          }),
-        }
-      );
-
-      const json = await response.json();
+      const json = await lookUpEmail(providedEmail, author);
 
       if (json.status === 'success') {
         addBreadcrumb({ message: 'linked-new-user' });

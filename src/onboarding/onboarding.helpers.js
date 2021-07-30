@@ -1,16 +1,6 @@
 import { EMAIL_ATTEMPT_LIMIT } from '../constants';
 import { sleep } from '../utils';
 
-export async function fetchUserByDiscordId(discordId) {
-  const response = await fetch(
-    `${process.env.API_ROOT}/api/discord/get-user-by-discord-id?id=${discordId}`
-  );
-
-  const json = await response.json();
-
-  return json.user;
-}
-
 export function getStep(member) {
   const hasExceededEmailLimit =
     member.emailAttemptCount > EMAIL_ATTEMPT_LIMIT;

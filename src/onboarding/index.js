@@ -23,6 +23,7 @@ export default function setup(client) {
     handleNewMember(guildMember, addStudentRole)
       .then(trackComplete)
       .catch((err) => {
+        console.error('ERROR', err, guildMember);
         const metadata = {
           guild: {
             name: guildMember.guild.name,

@@ -1,15 +1,18 @@
 import { captureUserForLogs } from '../helpers/error.helpers';
 import { registerMember } from '../models/member.model';
-import { fetchUserByDiscordId } from './onboarding.helpers';
+import { fetchUserByDiscordId } from '../helpers/api.helpers';
 import { sleep } from '../utils';
 
 export default async function handleNewMember(
   guildMember,
   addStudentRole
 ) {
+  console.log('PRE request');
   const preExistingMember = await fetchUserByDiscordId(
     guildMember.user.id
   );
+
+  console.log('pre-existing', preExistingMember);
 
   if (preExistingMember) {
     captureUserForLogs(preExistingMember);
