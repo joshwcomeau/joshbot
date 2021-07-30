@@ -8,21 +8,9 @@ It is open-sourced for educational purposes. Feel free to see how I did things. 
 
 ## Local Development
 
-> This is a reminder to self, **not** instructions for other folks. Sorry about that!
+> I've moved all of my personal notes on development to Confluence! If you're authorized, you can read them here:
 
-The entire "stack" is duplicated for local development. Specifically:
-
-- I use a different Discord bot ID (`DISCORD_BOT_TOKEN`)
-- It connects to a different Discord server (`DISCORD_GUILD_ID`)
-- It uses a different database to look up users (though now it uses the same DB connection as my prod server, just a different "table")
-
-To test the onboarding flow:
-
-1. Run the bot (`yarn start`)
-2. Open MongoDB Compass, look up my test user (`mytypicalemail+backup`). Delete `discordInfo`. Copy the ObjectID, pop over to the `discord-members` collection, and delete the member with `courseUserId` equal to the copied ID.
-3. On my regular discord account, pop into the 'Course Platform Staging' Discord server. Copy an invitation link.
-4. Log out of Discord, and log in with my `+backup` email. Paste the invite link to be invited to the server
-5. The bot should reach out!
+https://course-platform.atlassian.net/wiki/spaces/DEV/pages/128745480/Joshbot+%28Discord+Bot%29+Development
 
 ## Credits
 
